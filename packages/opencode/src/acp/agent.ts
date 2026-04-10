@@ -539,18 +539,18 @@ export namespace ACP {
       log.info("initialize", { protocolVersion: params.protocolVersion })
 
       const authMethod: AuthMethod = {
-        description: "Run `opencode auth login` in the terminal",
-        name: "Login with opencode",
-        id: "opencode-login",
+        description: `Run \`${Installation.CLI} auth login\` in the terminal`,
+        name: `Login with ${Installation.CLI}`,
+        id: "openloop-login",
       }
 
       // If client supports terminal-auth capability, use that instead.
       if (params.clientCapabilities?._meta?.["terminal-auth"] === true) {
         authMethod._meta = {
           "terminal-auth": {
-            command: "opencode",
+            command: Installation.CLI,
             args: ["auth", "login"],
-            label: "OpenCode Login",
+            label: "OpenLoop Login",
           },
         }
       }

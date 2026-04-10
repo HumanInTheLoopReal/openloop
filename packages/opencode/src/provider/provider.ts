@@ -17,6 +17,7 @@ import { Instance } from "../project/instance"
 import { Flag } from "../flag/flag"
 import { iife } from "@/util/iife"
 import { Global } from "../global"
+import { Installation } from "../installation"
 import path from "path"
 import { Filesystem } from "../util/filesystem"
 import { Effect, Layer, ServiceMap } from "effect"
@@ -54,7 +55,6 @@ import {
 import { fromNodeProviderChain } from "@aws-sdk/credential-providers"
 import { GoogleAuth } from "google-auth-library"
 import { ProviderTransform } from "./transform"
-import { Installation } from "../installation"
 import { ModelID, ProviderID } from "./schema"
 
 export namespace Provider {
@@ -751,7 +751,7 @@ export namespace Provider {
         if (!apiToken) {
           throw new Error(
             "CLOUDFLARE_API_TOKEN (or CF_AIG_TOKEN) is required for Cloudflare AI Gateway. " +
-              "Set it via environment variable or run `opencode auth cloudflare-ai-gateway`.",
+              `Set it via environment variable or run \`${Installation.CLI} auth cloudflare-ai-gateway\`.`,
           )
         }
 

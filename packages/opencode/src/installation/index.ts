@@ -58,6 +58,8 @@ export namespace Installation {
 
   export const VERSION = version
   export const CHANNEL = channel
+  /** Published npm / PATH command name (native binary inside platform packages may still be `opencode`). */
+  export const CLI = "openloop"
   export const USER_AGENT = `opencode/${CHANNEL}/${VERSION}/${Flag.OPENCODE_CLIENT}`
 
   export function isPreview() {

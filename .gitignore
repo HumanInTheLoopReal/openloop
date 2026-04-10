@@ -24,6 +24,8 @@ target
 .direnv/
 
 # Local dev files
+.flomaster/
+.omx/
 opencode-dev
 UPCOMING_CHANGELOG.md
 logs/

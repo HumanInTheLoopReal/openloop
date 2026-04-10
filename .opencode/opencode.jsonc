@@ -15,4 +15,21 @@
     "github-triage": false,
     "github-pr-search": false,
   },
+  "agent": {
+    "format-lead": {
+      "prompt": "hitl/agents/format-lead.md",
+      "description": "Picks the right structural blueprint for a video topic and maps content to the beat-by-beat skeleton. Phase 1 of the video production pipeline.",
+      "model": "anthropic/claude-opus-4-6",
+    },
+    "hook-writer": {
+      "prompt": "hitl/agents/hook-writer.md",
+      "description": "Writes the first 5-15 seconds of a Human in the Loop YouTube video — the hook. Phase 4 of the video production pipeline.",
+      "model": "anthropic/claude-opus-4-6",
+    },
+    "outliner": {
+      "prompt": "hitl/agents/outliner.md",
+      "description": "Builds the bulleted skeleton of a video — validation and sequencing, not writing. Contains the pipeline's hardest gate: the uniqueness gut-check. Phase 3 of the video production pipeline.",
+      "model": "anthropic/claude-opus-4-6",
+    },
+  },
 }

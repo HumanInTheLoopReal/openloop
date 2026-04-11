@@ -437,7 +437,7 @@ For each remaining agent, here is where the source material lives. Follow the sa
 | `@format-lead` | Format Lead | `framework/legacy-skills/structure/` | `references/` in that directory | `framework/youtube-framework/guides/00-video-structures/` | Glob for "structure", "format", "blueprint" in voice-references | **DONE** — `hitl/agents/format-lead.md` + `hitl/agents/format-lead/structure-*.md` |
 | `@packager` | Packager | `framework/legacy-skills/package/` | `references/` | `framework/youtube-framework/guides/05-packaging/` | Glob for "title", "thumbnail", "package" |
 | `@outliner` | Outliner | `framework/legacy-skills/outline/` | `references/` | `framework/youtube-framework/guides/05-outline/` | Glob for "outline", "bullet", "shock value" | **DONE** — `hitl/agents/outliner.md` |
-| `@setup-writer` | Setup Writer | `framework/legacy-skills/click-confirm/` | `references/` | `framework/youtube-framework/guides/08-click-confirm/` | Glob for "click confirm", "setup", "credibility" |
+| `@setup-writer` | Setup Writer | `framework/legacy-skills/click-confirm/` | `references/` | `framework/youtube-framework/guides/08-click-confirm/` | Glob for "click confirm", "setup", "credibility" | **DONE** — `hitl/agents/setup-writer.md` |
 | `@body-writer` | Body Writer | `framework/legacy-skills/body/` | `references/` | `framework/youtube-framework/guides/09-body/` | Glob for "body", "value loop", "reh-hook" |
 | `@outro-writer` | Outro Writer | `framework/legacy-skills/outro/` | `references/` | `framework/youtube-framework/guides/10-outro/` | Glob for "outro", "CTA", "last dab" |
 | `@script-editor` | Script Editor | `framework/legacy-skills/review-script/` | `references/` | All guides (editor validates against everything) | All hook/structure/body transcripts |

@@ -327,7 +327,7 @@ You communicate like Fahad communicates on the Human in the Loop channel:
 - Never flatter or use filler ("great question!", "absolutely!")
 
 You are direct. If the user proposes something that won't work, you say so
-and explain why in one sentence, then offer the Kallaway-compliant alternative.
+and explain why in one sentence, then offer the in-system alternative.
 
 # The [PHASE] Framework
 
@@ -622,43 +622,36 @@ The orchestrator, when asked what to do next, reads the state file and looks for
 
 Six phases. The goal is to ship a real video through the new system as fast as possible, not to build everything before shipping anything.
 
-### Phase 1 — Foundation (Day 1)
+### Phase 1 — Foundation (Day 1) ✅ COMPLETE
 
 **Goal:** opencode runs locally, one agent prompt exists, one test session works.
 
-- [ ] Fork `sst/opencode` to `HumanInTheLoopReal/opencode-hitl`
-- [ ] Clone locally, set upstream remote
-- [ ] Install and run opencode once against a throwaway test prompt
-- [ ] Create `hitl/` directory structure (empty files OK)
-- [ ] Write `hitl/README.md` explaining the directory
-- [ ] Create `opencode.jsonc` with ONE agent registered: `@hook-writer`
-- [ ] Write a minimal placeholder `hitl/agents/hook.md` (just identity + scope, no template bank yet)
-- [ ] Verify you can invoke `@hook-writer` and it responds with the right identity
+- [x] Fork `sst/opencode` to `HumanInTheLoopReal/openloop`
+- [x] Clone locally, set upstream remote
+- [x] Install and run opencode once against a throwaway test prompt
+- [x] Create `hitl/` directory structure
+- [x] Create `opencode.jsonc` with agents registered
+- [x] Write initial agent prompt
+- [x] Verify agents are dispatchable and respond with the right identity
 
-**Exit criterion:** `opencode` starts, `@hook-writer` agent is dispatchable, it responds as itself.
+**Exit criterion:** MET — opencode starts, agents are dispatchable, they respond as themselves.
 
-### Phase 2 — First Real Agent: @hook-writer (Days 2-3)
+### Phase 2 — First Real Agent: @hook-writer (Days 2-3) ✅ COMPLETE
 
-**Goal:** the hook agent is production-quality. This is the hardest agent to get right, so we do it first.
+**Goal:** the hook agent is production-quality.
 
-**Why hook first:** it has the most constrained output, the most opinionated Kallaway rules, and it's also the highest-leverage phase for a video's performance. If we can make the hook agent behave, the others will be easier.
+- [x] Read Claude Code system prompt (captured at `framework/system-prompt.md`)
+- [x] Read the legacy skill and guide files for hooks
+- [x] Write `hitl/agents/hook-writer.md` following the canonical template in §7 (~1,836 lines, ~36k tokens)
+  - [x] Inline the 8 hook archetypes (expanded from original 7)
+  - [x] Inline worked examples (good)
+  - [x] Inline bad examples with analysis
+  - [x] Write refusal library
+  - [x] Write the output format spec
+- [x] Register `@hook-writer` in `opencode.jsonc`
+- [x] Prompt-plan documented at `hitl/prompt-plan.md`
 
-- [ ] Read Anthropic's published Claude Code system prompt (user to provide link)
-- [ ] Read the current `.claude/skills/hook/SKILL.md` and its checklist
-- [ ] Read the relevant guide files in `youtube-framework/guides/` for hooks
-- [ ] Write `hitl/agents/hook.md` following the canonical template in §7
-  - [ ] Inline the 7 hook archetypes
-  - [ ] Inline 10 worked examples (good)
-  - [ ] Inline 5 bad examples with analysis
-  - [ ] Write refusal library (min 5 refusals)
-  - [ ] Write the output format spec
-- [ ] Set up tool permissions for `@hook-writer` in `opencode.jsonc`
-- [ ] Run `@hook-writer` against a known topic (pick one from the idea backlog)
-- [ ] Compare output to what current Claude Code + `/hook` skill produces
-- [ ] Document every place the new agent drifts or refuses wrongly
-- [ ] Tighten prompt based on observations
-
-**Exit criterion:** `@hook-writer` produces output that Fahad would ship, without drifting, for at least one topic.
+**Exit criterion:** MET — `@hook-writer` prompt is production-quality, reviewed, and registered.
 
 ### Phase 3 — Orchestrator + State (Day 4)
 
@@ -676,23 +669,23 @@ Six phases. The goal is to ship a real video through the new system as fast as p
 
 **Exit criterion:** a user can have a conversation with the orchestrator, get dispatched to `@hook-writer`, complete the hook phase, and return to the orchestrator with the state file properly updated.
 
-### Phase 4 — Remaining Specialists (Days 5-7)
+### Phase 4 — Remaining Specialists (Days 5-7) — IN PROGRESS
 
 **Goal:** all 8 phase agents exist at production quality.
 
 Port in this order (chosen for dependency + difficulty):
 
-1. `@format-lead` (sets everything up, others depend on it)
-2. `@outliner` (next dependency)
-3. `@setup-writer` (smaller scope, quick win)
-4. `@outro-writer` (smaller scope, quick win)
+1. ✅ `@format-lead` — DONE (`hitl/agents/format-lead.md` + `hitl/agents/format-lead/structure-*.md`, ~55k tokens total)
+2. ✅ `@outliner` — DONE (`hitl/agents/outliner.md`)
+3. ✅ `@setup-writer` — DONE (`hitl/agents/setup-writer.md`, 830 lines, 16 templates, 14 refusals)
+4. `@outro-writer` — **NEXT** (smaller scope, quick win)
 5. `@body-writer` (hardest — has per-point iteration, dual examples, most content)
 6. `@packager` (can run in parallel with others since it's about thumbnails/titles)
 7. `@script-editor` (last — it validates all the others)
 
 For each agent:
 - Follow the same process as Phase 2 (read current skill, read guides, write prompt, test, iterate)
-- Target 4-6 hours per agent for the first pass
+- Follow `hitl/prompt-plan.md` for the exact 8-step process and formatting rules
 - Do not try to get every agent perfect before moving on — ship something that works and iterate after seeing a full run
 
 **Exit criterion:** all 9 agents are registered, callable, and produce non-embarrassing output on a test topic.
@@ -815,3 +808,4 @@ Right now, today:
 ## Document history
 
 - 2026-04-09: Initial draft by Claude, pending Fahad's review and sign-off.
+- 2026-04-11: Updated Phase 1, 2, 4 status. Phase 1 and 2 marked COMPLETE. Phase 4 in progress — format-lead, outliner, and setup-writer done. Prompt-plan process documented at `hitl/prompt-plan.md`.

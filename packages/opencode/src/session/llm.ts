@@ -117,6 +117,21 @@ export namespace LLM {
         .join("\n"),
     )
 
+    if (Flag.OPENCODE_DEBUG_SYSTEM) {
+      const merged = system.join("\n")
+      process.stderr.write(
+        JSON.stringify({
+          tag: "opencode_debug_system",
+          agent: input.agent.name,
+          systemPromptOnly: input.agent.systemPromptOnly ?? false,
+          mergedChars: merged.length,
+          hasInstructionsFrom: merged.includes("Instructions from:"),
+          hasEnvBlock: merged.includes("<env>"),
+          hasSkillsPreamble: merged.includes("Skills provide specialized"),
+        }) + "\n",
+      )
+    }
+
     const header = system[0]
     await Plugin.trigger(
       "experimental.chat.system.transform",

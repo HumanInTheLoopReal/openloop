@@ -535,6 +535,12 @@ export namespace Config {
       tools: z.record(z.string(), z.boolean()).optional().describe("@deprecated Use 'permission' field instead"),
       disable: z.boolean().optional(),
       description: z.string().optional().describe("Description of when to use the agent"),
+      system_prompt_only: z
+        .boolean()
+        .optional()
+        .describe(
+          "When true, only this agent's prompt is sent as system context — no CLAUDE.md/AGENTS.md, skills preamble, or environment block.",
+        ),
       mode: z.enum(["subagent", "primary", "all"]).optional(),
       hidden: z
         .boolean()
@@ -567,6 +573,7 @@ export namespace Config {
         "description",
         "temperature",
         "top_p",
+        "system_prompt_only",
         "mode",
         "hidden",
         "color",

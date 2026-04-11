@@ -167,13 +167,27 @@ function findBinary(startDir) {
 }
 
 const resolved = findBinary(scriptDir)
-if (!resolved) {
-  console.error(
-    "It seems that your package manager failed to install the right version of the openloop CLI for your platform. You can try manually installing " +
-      names.map((n) => `\"${n}\"`).join(" or ") +
-      " package",
-  )
-  process.exit(1)
+if (resolved) {
+  run(resolved)
 }
 
-run(resolved)
+const pkgRoot = path.join(scriptDir, "..")
+const devEntry = path.join(pkgRoot, "src", "index.ts")
+if (fs.existsSync(devEntry)) {
+  const result = childProcess.spawnSync("bun", ["run", "--cwd", pkgRoot, "--conditions=browser", "./src/index.ts", ...process.argv.slice(2)], {
+    stdio: "inherit",
+    env: process.env,
+  })
+  if (result.error) {
+    console.error(result.error.message)
+    process.exit(1)
+  }
+  process.exit(typeof result.status === "number" ? result.status : 0)
+}
+
+console.error(
+  "It seems that your package manager failed to install the right version of the openloop CLI for your platform. You can try manually installing " +
+    names.map((n) => `\"${n}\"`).join(" or ") +
+    " package",
+)
+process.exit(1)

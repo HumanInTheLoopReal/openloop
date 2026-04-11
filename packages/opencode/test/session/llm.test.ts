@@ -628,6 +628,94 @@ describe("session.llm.stream", () => {
     })
   })
 
+  test("openai-compatible chat: empty system array + agent.prompt yields a single system message with only the agent prompt", async () => {
+    const server = state.server
+    if (!server) {
+      throw new Error("Server not initialized")
+    }
+
+    const providerID = "alibaba"
+    const modelID = "qwen-plus"
+    const fixture = await loadFixture(providerID, modelID)
+    const model = fixture.model
+
+    const request = waitRequest(
+      "/chat/completions",
+      new Response(createChatStream("Hello"), {
+        status: 200,
+        headers: { "Content-Type": "text/event-stream" },
+      }),
+    )
+
+    await using tmp = await tmpdir({
+      init: async (dir) => {
+        await Bun.write(
+          path.join(dir, "opencode.json"),
+          JSON.stringify({
+            $schema: "https://opencode.ai/config.json",
+            enabled_providers: [providerID],
+            provider: {
+              [providerID]: {
+                options: {
+                  apiKey: "test-key",
+                  baseURL: `${server.url.origin}/v1`,
+                },
+              },
+            },
+          }),
+        )
+      },
+    })
+
+    await Instance.provide({
+      directory: tmp.path,
+      fn: async () => {
+        const resolved = await Provider.getModel(ProviderID.make(providerID), ModelID.make(model.id))
+        const sessionID = SessionID.make("session-test-prompt-only")
+        const agent = {
+          name: "outliner",
+          mode: "primary",
+          options: {},
+          permission: [{ permission: "*", pattern: "*", action: "allow" }],
+          prompt: "OUTLINER_PROMPT_ONLY_XYZ",
+          systemPromptOnly: true,
+        } satisfies Agent.Info
+
+        const user = {
+          id: MessageID.make("user-prompt-only"),
+          sessionID,
+          role: "user",
+          time: { created: Date.now() },
+          agent: agent.name,
+          model: { providerID: ProviderID.make(providerID), modelID: resolved.id },
+        } satisfies MessageV2.User
+
+        const stream = await LLM.stream({
+          user,
+          sessionID,
+          model: resolved,
+          agent,
+          system: [],
+          abort: new AbortController().signal,
+          messages: [{ role: "user", content: "Hello" }],
+          tools: {},
+        })
+
+        for await (const _ of stream.fullStream) {
+        }
+
+        const capture = await request
+        const messages = capture.body.messages as Array<{ role: string; content: unknown }>
+        const systemMsgs = messages.filter((m) => m.role === "system")
+        expect(systemMsgs.length).toBe(1)
+        expect(systemMsgs[0]?.content).toBe("OUTLINER_PROMPT_ONLY_XYZ")
+        const joined = JSON.stringify(capture.body)
+        expect(joined.includes("Instructions from:")).toBe(false)
+        expect(joined.includes("<env>")).toBe(false)
+      },
+    })
+  })
+
   test("sends responses API payload for OpenAI models", async () => {
     const server = state.server
     if (!server) {

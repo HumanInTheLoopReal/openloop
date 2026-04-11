@@ -313,7 +313,7 @@
       "name": "opencode",
       "version": "1.4.2",
       "bin": {
-        "openloop": "./bin/openloop",
+        "openloop": "./bin/openloop.cjs",
       },
       "dependencies": {
         "@actions/core": "1.11.1",

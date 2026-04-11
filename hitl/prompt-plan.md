@@ -109,7 +109,7 @@ Before writing, study two things:
 **B. The Hook Writer prompt** (`hitl/agents/hook-writer.md`). This is the exemplar. Every new agent prompt follows the same structural skeleton:
 
 ```
-[YAML frontmatter — name, display, phase, description, model]
+[YAML frontmatter — name, display, phase, description (NO model field — agents inherit the user's default model)]
 
 [Identity paragraph — who you are, what you do, nothing else]
 
@@ -180,7 +180,7 @@ Write the full prompt in one pass using the Write tool. Compose section by secti
 - **No `>` blockquotes for teaching layers.** Use plain text under a `**Teaching layer:**` label. Blockquotes cause the model to treat the text as "quoted material to potentially repeat" rather than "knowledge to internalize." The teaching layers are the agent's OWN knowledge, not someone else's words it's citing.
 - **No `>` blockquotes for refusals.** Write refusals as inline prose: "When X happens, respond with exactly this: '[exact sentence]'." The refusal wording goes in double quotes inside the paragraph, not in a blockquote.
 - **`>` blockquotes ARE used for:** template lines with `[SWAP: ...]` markers, original worked examples, and actual output the agent produces (spoken hook lines in examples, script content).
-- **YAML frontmatter is required** for opencode agent registration. Every agent file starts with `---` frontmatter containing name, display, phase, description, model.
+- **YAML frontmatter is required** for opencode agent registration. Every agent file starts with `---` frontmatter containing name, display, phase, description (no model field — agents inherit default).
 
 **On structure:**
 - Identity paragraph first (before any heading). Short. Declarative. What you are, what you do, what you don't do.
@@ -262,7 +262,7 @@ Compare the finished prompt against the Claude Code system prompt's formatting c
 - [ ] No hedging language ("try to avoid" → "never"; "generally prefer" → "always"; "consider" → "do")
 - [ ] Identity paragraph before any heading
 - [ ] Environment context as the last section
-- [ ] YAML frontmatter present with name, display, phase, description, model
+- [ ] YAML frontmatter present with name, display, phase, description (no model field — agents inherit default)
 
 ## Step 8: Final verification
 
@@ -412,6 +412,20 @@ The format-lead's source material is more analytical (the guide files) than conv
 
 **The rule:** Mine transcripts for every agent, even if the primary source material is guide files. The guide files provide structure; the transcripts provide voice.
 
+## 19. Agent prompts reference the user's working directory, not the openloop source
+
+OpenLoop is an installed CLI tool — like Claude Code. The agent prompts are bundled with the tool and loaded by the runtime. But the agent OPERATES in the user's current working directory, which is their content production project.
+
+This means:
+- **Production paths** (`production/youtube/[slug]/video-state.md`, `production/idea-backlog.md`) are correct — they are relative to the user's working directory.
+- **Installation paths** (`hitl/agents/*.md`, `framework/legacy-skills/`, `framework/youtube-framework/`) must NEVER appear in the agent's runtime instructions, Environment Context, or Process steps. Those files are part of the tool's installation, not the user's project.
+- **The working directory line** in Environment Context must say "the user's current directory" — never "the repo root" or a hardcoded absolute path.
+- **Self-references** to the agent's own prompt file (`hitl/agents/outliner.md`) are unnecessary and imply the working directory contains `hitl/`. Remove them.
+- **Bundled reference files** (like format-lead's `structure-*.md`) are loaded by the runtime, not from the user's directory. The prompt says "bundled with this agent — the runtime resolves the path" rather than specifying a filesystem path.
+- **Quality calibration examples** from legacy skills (`framework/legacy-skills/*/templates/`) must NOT be referenced at runtime. Inline the worked example in the Examples of Great Output section instead.
+
+**The grep test:** After writing any agent prompt, grep for `hitl/`, `framework/`, and `/Users/`. Zero matches required.
+
 ---
 
 # The Agent Roster and Source Material Map
@@ -436,7 +450,7 @@ For each remaining agent, here is where the source material lives. Follow the sa
 
 ```
 ALWAYS:
-- YAML frontmatter (---) at the top with name, display, phase, description, model
+- YAML frontmatter (---) at the top with name, display, phase, description (no model field — agents inherit default)
 - Identity paragraph before any # heading
 - IMPORTANT: lines (3-5) after identity, before # Tone and Style
 - # for major sections, ## for subsections
